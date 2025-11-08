@@ -23,14 +23,19 @@ window.addEventListener("load", async () => {
         const paired = map1[item.serial];
 
         // 檢查破圖
-        if(!paired) {
-            console.warn(`Serial ${item.serial} 沒有對應到的資料`);
-            return null; 
-        }
+        if(!paired)return null;
 
-        const prefix = "/d_upload_ttn/sceneadmin/pic/";
-        const parts = item.pics.split(prefix);
-        const firstPic = prefix + (parts[1] || "");
+
+
+        // 原本 prefix 設定是用 "/pic/" 結果發現有些資料 "/image/" 做連接所以造成跑出來有破圖，所以改用 "抓第一張圖片" 的方式
+        // const prefix = "/d_upload_ttn/sceneadmin/pic/";
+        // const parts = item.pics.split(prefix);
+        // const firstPic = prefix + (parts[1] || "");
+
+        // 同時抓取尾巴是 "/pic/" 和 "/image/" 的
+        const match = item.pics.match(/\/d_upload_ttn\/sceneadmin\/(pic|image)\/[^ ]+?\.(jpg|jpeg|png|webp)/i);
+        const firstPic = match ? match[0] : "default.png";
+        
         const fullUrl = host + firstPic
 
         return{
